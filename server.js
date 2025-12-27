@@ -13,7 +13,6 @@ const __dirname = path.dirname(__filename);
 const start = async () => {
   const app = express();
 
-  // PostgreSQL konekcija — samo ako PGHOST postoji (Railway)
   let pool = null;
 
   if (process.env.PGHOST) {
@@ -26,7 +25,6 @@ const start = async () => {
       ssl: { rejectUnauthorized: false }
     });
 
-    // Kreiranje tablice ako ne postoji
     await pool.query(`
       CREATE TABLE IF NOT EXISTS posts (
         id SERIAL PRIMARY KEY,
@@ -37,11 +35,9 @@ const start = async () => {
     `);
   }
 
-  // Middleware
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(express.json());
 
-  // Session middleware
   app.use(
     session({
       secret: "leonavuk-secret",
@@ -50,20 +46,10 @@ const start = async () => {
     })
   );
 
-  // Statički fajlovi
-  app.use("/static", express.static(path.join(__dirname, "static")));
-  app.use("/muzika", express.static(path.join(__dirname, "muzika")));
+  // OVO JE JEDINI STATIC KOJI TI TREBA
   app.use(express.static(path.join(__dirname, "muzika", "public")));
 
-  // Hardkodirani korisnici
-  const users = {
-    leona: "0976106753",
-    "vukjenajkul@gmail.com": "vukjenajkul1999"
-  };
-
-  // Ulazna stranica (L)
-  app.use(express.static(path.join(__dirname, "muzika", "public")));
-
+  // Root ruta
   app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "muzika", "public", "index.html"));
   });
@@ -76,6 +62,10 @@ const start = async () => {
   // Login provjera
   app.post("/login", (req, res) => {
     const { username, password } = req.body;
+    const users = {
+      leona: "0976106753",
+      "vukjenajkul@gmail.com": "vukjenajkul1999"
+    };
     if (users[username] && users[username] === password) {
       req.session.user = username;
       res.redirect("/feed");
@@ -92,14 +82,14 @@ const start = async () => {
     res.sendFile(path.join(__dirname, "feed.html"));
   });
 
-  // Dohvat svih postova
+  // Dohvat postova
   app.get("/posts", async (req, res) => {
     if (!req.session.user) {
       return res.status(401).json({ error: "Nisi ulogirana" });
     }
 
     if (!pool) {
-      return res.json([]); // lokalno: nema baze, ali app radi
+      return res.json([]);
     }
 
     const result = await pool.query(`
