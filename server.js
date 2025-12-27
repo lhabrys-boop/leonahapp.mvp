@@ -13,25 +13,29 @@ const __dirname = path.dirname(__filename);
 const start = async () => {
   const app = express();
 
-  // PostgreSQL konekcija — koristi TAČNO ono što Railway daje
-  const pool = new Pool({
-    host: process.env.PGHOST,
-    port: process.env.PGPORT,
-    user: process.env.PGUSER,
-    password: process.env.PGPASSWORD,
-    database: process.env.PGDATABASE,
-    ssl: { rejectUnauthorized: false }
-  });
+  // PostgreSQL konekcija — samo ako PGHOST postoji (Railway)
+  let pool = null;
 
-  // Kreiranje tablice ako ne postoji
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS posts (
-      id SERIAL PRIMARY KEY,
-      author TEXT NOT NULL,
-      content TEXT NOT NULL,
-      created_at TEXT NOT NULL
-    )
-  `);
+  if (process.env.PGHOST) {
+    pool = new Pool({
+      host: process.env.PGHOST,
+      port: process.env.PGPORT,
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE,
+      ssl: { rejectUnauthorized: false }
+    });
+
+    // Kreiranje tablice ako ne postoji
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS posts (
+        id SERIAL PRIMARY KEY,
+        author TEXT NOT NULL,
+        content TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    `);
+  }
 
   // Middleware
   app.use(bodyParser.urlencoded({ extended: true }));
@@ -94,6 +98,10 @@ const start = async () => {
       return res.status(401).json({ error: "Nisi ulogirana" });
     }
 
+    if (!pool) {
+      return res.json([]); // lokalno: nema baze, ali app radi
+    }
+
     const result = await pool.query(`
       SELECT id, author, content, created_at
       FROM posts
@@ -113,6 +121,10 @@ const start = async () => {
 
     if (!content || content.trim() === "") {
       return res.status(400).json({ error: "Prazan post" });
+    }
+
+    if (!pool) {
+      return res.status(500).json({ error: "Baza nije dostupna lokalno" });
     }
 
     await pool.query(
