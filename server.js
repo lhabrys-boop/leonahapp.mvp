@@ -51,9 +51,9 @@ const start = async () => {
   );
 
   // Statički fajlovi
-  app.use(express.static(__dirname));
   app.use("/static", express.static(path.join(__dirname, "static")));
   app.use("/muzika", express.static(path.join(__dirname, "muzika")));
+  app.use(express.static(path.join(__dirname, "muzika", "public")));
 
   // Hardkodirani korisnici
   const users = {
