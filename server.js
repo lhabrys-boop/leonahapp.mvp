@@ -46,8 +46,10 @@ const users = {
 };
 
 // Ulazna stranica (L)
+app.use(express.static(path.join(__dirname, "muzika", "public")));
+
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "muzika", "public", "index.html"));
 });
 
 // Login stranica
