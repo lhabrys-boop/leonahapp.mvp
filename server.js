@@ -1,19 +1,48 @@
 import express from "express";
+import fetch from "node-fetch";
+import dotenv from "dotenv";
 import path from "path";
 import bodyParser from "body-parser";
 import session from "express-session";
 import { fileURLToPath } from "url";
 import Database from "better-sqlite3";
 
+dotenv.config();
+
+// ESM __dirname fix
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// SQLite baza
+// ----------------------
+// STATIC FILES
+// ----------------------
+app.use(express.static(path.join(__dirname, "muzika", "public")));
+app.use("/static", express.static(path.join(__dirname, "static")));
+app.use("/muzika", express.static(path.join(__dirname, "muzika")));
+
+// ----------------------
+// LAST.FM API
+// ----------------------
+app.get("/api/lastfm", async (req, res) => {
+  const apiKey = process.env.LASTFM_API_KEY;
+  const user = process.env.LASTFM_USER;
+
+  const response = await fetch(
+    `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${user}&api_key=${apiKey}&format=json`
+  );
+  const data = await response.json();
+
+  res.json(data);
+});
+
+// ----------------------
+// SQLITE BAZA
+// ----------------------
 const db = new Database("leona.db");
 
-// Kreiraj tablicu ako ne postoji
 db.exec(`
   CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,43 +52,42 @@ db.exec(`
   )
 `);
 
-// Middleware
+// ----------------------
+// MIDDLEWARE
+// ----------------------
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Session middleware
-app.use(session({
-  secret: "leonavuk-secret",
-  resave: false,
-  saveUninitialized: true
-}));
+app.use(
+  session({
+    secret: "leonavuk-secret",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
-// statički fajlovi
-app.use(express.static(__dirname));
-app.use("/static", express.static(path.join(__dirname, "static")));
-app.use("/muzika", express.static(path.join(__dirname, "muzika")));
-
-// Hardkodirani korisnici
-const users = {
-  "leona": "0976106753",
-  "vukjenajkul@gmail.com": "vukjenajkul1999"
-};
-
-// Ulazna stranica (L)
-app.use(express.static(path.join(__dirname, "muzika", "public")));
-
+// ----------------------
+// ROOT ROUTE (L stranica)
+// ----------------------
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "muzika", "public", "index.html"));
 });
 
-// Login stranica
+// ----------------------
+// LOGIN
+// ----------------------
+const users = {
+  leona: "0976106753",
+  "vukjenajkul@gmail.com": "vukjenajkul1999",
+};
+
 app.get("/leonavuk", (req, res) => {
   res.sendFile(path.join(__dirname, "leonavuk.html"));
 });
 
-// Login provjera
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
+
   if (users[username] && users[username] === password) {
     req.session.user = username;
     res.redirect("/feed");
@@ -68,19 +96,21 @@ app.post("/login", (req, res) => {
   }
 });
 
-// Feed stranica
+// ----------------------
+// FEED
+// ----------------------
 app.get("/feed", (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("/leonavuk");
-  }
+  if (!req.session.user) return res.redirect("/leonavuk");
+
   res.sendFile(path.join(__dirname, "feed.html"));
 });
 
-// Dohvat svih postova
+// ----------------------
+// POSTS API
+// ----------------------
 app.get("/posts", (req, res) => {
-  if (!req.session.user) {
+  if (!req.session.user)
     return res.status(401).json({ error: "Nisi ulogirana" });
-  }
 
   const stmt = db.prepare(`
     SELECT id, author, content, created_at
@@ -88,22 +118,17 @@ app.get("/posts", (req, res) => {
     ORDER BY id DESC
   `);
 
-  const posts = stmt.all();
-
-  res.json(posts);
+  res.json(stmt.all());
 });
 
-// Dodavanje posta
 app.post("/post", (req, res) => {
-  if (!req.session.user) {
+  if (!req.session.user)
     return res.status(401).json({ error: "Nisi ulogirana" });
-  }
 
   const { content } = req.body;
 
-  if (!content || content.trim() === "") {
+  if (!content || content.trim() === "")
     return res.status(400).json({ error: "Prazan post" });
-  }
 
   const stmt = db.prepare(`
     INSERT INTO posts (author, content, created_at)
@@ -115,14 +140,18 @@ app.post("/post", (req, res) => {
   res.json({ ok: true });
 });
 
-// Logout
+// ----------------------
+// LOGOUT
+// ----------------------
 app.get("/logout", (req, res) => {
   req.session.destroy(() => {
     res.redirect("/leonavuk");
   });
 });
 
-const PORT = process.env.PORT || 3000;
+// ----------------------
+// START SERVER
+// ----------------------
 app.listen(PORT, () => {
   console.log(`Server radi na portu ${PORT}`);
 });
