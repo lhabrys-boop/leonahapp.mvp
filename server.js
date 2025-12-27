@@ -121,6 +121,8 @@ app.get("/logout", (req, res) => {
   });
 });
 
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(`Server radi na http://localhost:${PORT}`);
+  console.log(`Server radi na portu ${PORT}`);
 });
