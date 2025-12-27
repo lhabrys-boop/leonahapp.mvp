@@ -3,8 +3,9 @@ import path from "path";
 import bodyParser from "body-parser";
 import session from "express-session";
 import { fileURLToPath } from "url";
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import pkg from "pg";
+
+const { Pool } = pkg;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,16 +13,16 @@ const __dirname = path.dirname(__filename);
 const start = async () => {
   const app = express();
 
-  // Otvaranje SQLite baze (async)
-  const db = await open({
-    filename: "leona.db",
-    driver: sqlite3.Database
+  // PostgreSQL konekcija
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
   });
 
   // Kreiranje tablice ako ne postoji
-  await db.exec(`
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS posts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       author TEXT NOT NULL,
       content TEXT NOT NULL,
       created_at TEXT NOT NULL
@@ -89,13 +90,13 @@ const start = async () => {
       return res.status(401).json({ error: "Nisi ulogirana" });
     }
 
-    const posts = await db.all(`
+    const result = await pool.query(`
       SELECT id, author, content, created_at
       FROM posts
       ORDER BY id DESC
     `);
 
-    res.json(posts);
+    res.json(result.rows);
   });
 
   // Dodavanje posta
@@ -110,9 +111,9 @@ const start = async () => {
       return res.status(400).json({ error: "Prazan post" });
     }
 
-    await db.run(
+    await pool.query(
       `INSERT INTO posts (author, content, created_at)
-       VALUES (?, ?, ?)`,
+       VALUES ($1, $2, $3)`,
       [req.session.user, content.trim(), new Date().toISOString()]
     );
 
