@@ -1,0 +1,108 @@
+body {
+  background: #fdf6e3; /* pergament boja */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+#bigL img {
+  width: 300px; /* početna veličina */
+  cursor: pointer;
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+#extendedL {
+  display: none; /* skriven dok se ne klikne */
+}
+
+#extendedL img {
+  width: 600px; /* možeš prilagoditi veličinu extended verzije */
+}
+
+#bigL img {
+  width: 40vw;       /* zauzima 40% širine ekrana */
+  max-width: 300px;  /* ali nikad veće od 300px */
+  cursor: pointer;
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+#extendedL img {
+  max-width: 90vw;   /* nikad šire od ekrana */
+  max-height: 90vh;  /* nikad više od ekrana */
+  object-fit: contain; /* prilagodi se bez rezanja */
+}
+
+
+/* Mobiteli */
+@media (max-width: 600px) {
+  #bigL img {
+    width: 60vw;
+    max-width: 200px;
+  }
+
+  #extendedL img {
+    width: 90vw;
+    max-width: 300px;
+  }
+}
+
+/* Tableti */
+@media (min-width: 601px) and (max-width: 1024px) {
+  #bigL img {
+    width: 50vw;
+    max-width: 250px;
+  }
+
+  #extendedL img {
+    width: 85vw;
+    max-width: 500px;
+  }
+}
+
+body {
+  cursor: url("images/leona-cursor.png"), auto;
+}
+
+#vuk {
+  position: fixed;       /* uvijek na istom mjestu, ne miče se kad skrolaš */
+  bottom: 10px;          /* udaljenost od dna ekrana */
+  right: 10px;           /* udaljenost od desnog ruba */
+  width: 80px;           /* veličina slike */
+  height: auto;          /* proporcionalno */
+  z-index: 1000;         /* da bude iznad ostalih elemenata */
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 stupca */
+  grid-gap: 20px;
+  padding: 40px;
+  max-width: 90vw;
+  margin: auto;
+}
+
+.box {
+  background-color: #fceee3;
+  color: #4b2e2e;
+  font-family: serif;
+  font-size: 24px;
+  text-align: center;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.box:hover {
+  transform: scale(1.05);
+  background-color: #f9dbcc;
+}
+
+.hotspot {
+  position: absolute;
+  display: block;
+  background: transparent; /* više se ne vidi */
+}

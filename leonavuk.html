@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Leonavuk Login</title>
+  <link rel="icon" href="/static/leona-cursor.png" type="image/png">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      background-color: #000;
+      color: #0f0;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+    }
+    input {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
+    }
+    button {
+      padding: 10px;
+      background-color: #0f0;
+      color: #000;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0c0;
+    }
+  </style>
+</head>
+<body>
+  <form method="POST" action="/login">
+    <input type="text" name="username" placeholder="Korisničko ime" required>
+    <input type="password" name="password" placeholder="Lozinka" required>
+    <button type="submit">Prijava</button>
+  </form>
+</body>
+</html>

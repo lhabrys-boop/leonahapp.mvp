@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Leona Feed</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #0f0; /* zelena slova */
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Header */
+    .header {
+      background-color: #111;
+      padding: 10px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-bottom: 2px solid #0f0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 200px;
+      background-color: #111;
+      padding: 15px;
+      float: left;
+      height: 100vh;
+      border-right: 2px solid #0f0;
+    }
+
+    .sidebar h3 {
+      margin-top: 0;
+      color: #0f0;
+    }
+
+    /* Feed */
+    .feed {
+      margin-left: 220px;
+      padding: 20px;
+    }
+
+    .post-box {
+      background-color: #111;
+      padding: 15px;
+      border: 1px solid #0f0;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .post-box textarea {
+      width: 100%;
+      height: 60px;
+      background-color: #000;
+      color: #0f0;
+      border: 1px solid #0f0;
+      border-radius: 5px;
+      padding: 10px;
+    }
+
+    .post-box button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #0f0;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .post {
+      background-color: #111;
+      border: 1px solid #0f0;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .post .author {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .post .actions {
+      margin-top: 10px;
+    }
+
+    .post .actions button {
+      background: none;
+      border: none;
+      color: #0f0;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Leonavuk Feed</div>
+
+  <div class="sidebar">
+    <h3>Izbornik</h3>
+    <p>Profil</p>
+    <p>Postavke</p>
+  </div>
+
+  <div class="feed">
+    <!-- Polje za unos posta -->
+    <div class="post-box">
+      <textarea placeholder="Što ti je na umu, Leona?"></textarea>
+      <button>Objavi</button>
+    </div>
+
+    <!-- Primjer posta -->
+    <div class="post">
+      <div class="author">Leona</div>
+      <div class="content">Prvi test post na crno‑zelenom Facebooku 😎</div>
+      <div class="actions">
+        <button>👍 Lajk</button>
+        <button>💬 Komentar</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

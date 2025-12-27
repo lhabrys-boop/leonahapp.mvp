@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Muzika</title>
+  
+  <!-- Favicon na tabu -->
+  <link rel="icon" type="image/png" href="/muzika/public/static/leona-cursor.png">
+
+  <!-- Kursor -->
+  <style>
+    body {
+      cursor: url('/static/leona-cursor.png'), auto;
+    }
+    .vuk-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: auto;
+      cursor: pointer;
+    }
+  </style>
+
+  <link rel="stylesheet" href="/muzika/public/style.css">
+</head>
+<body>
+  <!-- Glavna slika -->
+  <img src="/muzika/public/static/prazno.jpg" alt="Pergament" class="bg">
+
+  <!-- Tekstualni sadržaj -->
+  <div class="wrap">
+    <h2>Nedavno slušano:</h2>
+    <ul id="recent"></ul>
+
+    <h2>Leoni trenutno u ušima:</h2>
+    <p id="now"></p>
+  </div>
+
+  <!-- Ikonica vuka dolje desno -->
+  <a href="/leonavuk">
+    <img src="/muzika/public/static/vuk.jpg" alt="Login Vuk" class="vuk-icon">
+  </a>
+
+  <script src="/muzika/public/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>leonahapp.com</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* sakrij extended dok ne klikneš */
+    #extendedL {
+      display: none;
+      position: relative;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    #extendedL img {
+      width: 100%;       /* slika se prilagođava ekranu */
+      height: auto;
+      display: block;
+    }
+    .hotspot {
+      position: absolute;
+      display: block;
+      background: rgba(255,0,0,0.2); /* vidiš dok testiraš */
+    }
+  </style>
+</head>
+<body>
+  <!-- Veliko L -->
+  <div id="bigL">
+    <a href="muzika/public/index.html">
+    <img src="images/L.jpg" alt="Veliko L" onclick="showExtended()">
+    </a>
+  </div>
+
+ 
+  
+ 
+
+   <!-- JavaScript -->
+  <script>
+    function showExtended() {
+      document.getElementById("extendedL").style.display = "block";
+      document.getElementById("bigL").style.display = "none";
+    }
+  </script>
+</body>
+</html>
